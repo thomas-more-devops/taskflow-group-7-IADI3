@@ -3,14 +3,14 @@
 > A modern, responsive task management app built with HTML, CSS, and JavaScript
 
 ## 🚀 Live Demo
-**Try TaskFlow now:** [https://yourusername.github.io/taskflow](https://yourusername.github.io/taskflow)
+**Try TaskFlow now:** [https://thomas-more-devops.github.io/taskflow-group-7-IADI3/](https://thomas-more-devops.github.io/taskflow-group-7-IADI3/)
 
 ## 📊 Project Status
 ![TaskFlow](https://img.shields.io/badge/TaskFlow-v1.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/taskflow)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/taskflow)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/taskflow)
+![GitHub last commit](https://img.shields.io/github/last-commit/thomas-more-devops/taskflow-group-7-IADI3)
+![GitHub issues](https://img.shields.io/github/issues/thomas-more-devops/taskflow-group-7-IADI3)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/thomas-more-devops/taskflow-group-7-IADI3)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=flat&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=flat&logo=javascript&logoColor=%23F7DF1E)
@@ -45,9 +45,13 @@ This project is part of the **Bachelor International Business Management - Data 
 ## 📱 Screenshots
 
 ### Desktop View
+![TaskFlow desktop view](screenshots/1.png)
+
 *Professional task management interface with clean design*
 
 ### Mobile View
+<img src="screenshots/2.jpg" alt="TaskFlow mobile view" width="300">
+
 *Fully responsive design that works on all devices*
 
 ## 🏃 Quick Start
@@ -115,8 +119,11 @@ taskflow/
 │   └── CONTRIBUTING.md    # Contributing guidelines
 ├── .github/
 │   └── pull_request_template.md  # PR template
+├── screenshots/
+│   ├── 1.png              # Desktop screenshot
+│   └── 2.jpg              # Mobile screenshot
 ├── .gitignore             # Git ignore rules
-├── LICENSE                # MIT license
+├── LICENCE                # MIT license
 └── README.md              # This file
 ```
 
@@ -148,7 +155,7 @@ git push origin feature/feature-name   # Push to remote
 2. Go to Settings → Pages
 3. Select source: "Deploy from branch"
 4. Choose "main" branch
-5. Your app will be live at `https://yourusername.github.io/repository-name`
+5. Your app will be live at `https://<username-or-org>.github.io/<repository-name>` (this project: https://thomas-more-devops.github.io/taskflow-group-7-IADI3/)
 
 ### Local Development
 Simply open `index.html` in any modern web browser. No server required!
@@ -285,12 +292,12 @@ chore: maintenance tasks
 
 ## 📝 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the [MIT License](LICENCE).
 
 ```
 MIT License
 
-Copyright (c) 2024 TaskFlow
+Copyright (c) 2026 TaskFlow Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -306,10 +313,8 @@ copies or substantial portions of the Software.
 ## 📞 Course Support
 
 ### Getting Help
-- **Instructor**: [Instructor Name](mailto:instructor@example.com)
+- **Instructor**: Harun Kalkanci
 - **Course Materials**: Available on course platform
-- **Office Hours**: Tuesdays & Thursdays 2-4 PM
-- **Discussion Forum**: [Course Forum Link]
 
 ### Technical Support
 If you have any questions or need help:
@@ -330,7 +335,7 @@ This TaskFlow application demonstrates:
 
 ## 🎯 Future Enhancements
 
-Potential improvements for version 2.0:
+Potential improvements for version 2.0 (each one is tracked as a [GitHub issue](https://github.com/thomas-more-devops/taskflow-group-7-IADI3/issues)):
 - [ ] **Task Categories**: Color-coded categories (Work, Personal, Shopping)
 - [ ] **Due Dates**: Calendar integration and deadline reminders
 - [ ] **Priority Levels**: High, Medium, Low priority sorting
@@ -352,20 +357,17 @@ Potential improvements for version 2.0:
 Thanks to all the students and developers who contributed to this project:
 
 ### Course Contributors (Week 2 - Git Fundamentals)
-- [@student1](https://github.com/student1) - Documentation improvements and setup guide
-- [@student2](https://github.com/student2) - CSS enhancements and responsive design
-- [@student3](https://github.com/student3) - JavaScript functionality and error handling
-- [@student4](https://github.com/student4) - Testing, quality assurance, and project management
+- [@GITHUB_USERNAME_A](https://github.com/GITHUB_USERNAME_A) - Student A: HTML documentation comments
+- [@GITHUB_USERNAME_B](https://github.com/GITHUB_USERNAME_B) - Student B: CSS comments explaining design choices
+- [@GITHUB_USERNAME_C](https://github.com/GITHUB_USERNAME_C) - Student C: JavaScript comments and error handling
 
 ### How to Become a Contributor
 1. Complete the [setup instructions](docs/SETUP.md)
-2. Pick an issue from our [project board](https://github.com/yourusername/taskflow/projects)
+2. Pick an issue from our [project board](https://github.com/thomas-more-devops/taskflow-group-7-IADI3/projects)
 3. Follow our [contributing guidelines](docs/CONTRIBUTING.md)
 4. Submit a pull request for review
 
 ## 🔄 Version History
-
-See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 ### v1.0.0 (Current)
 - ✨ Initial release with core functionality
@@ -397,7 +399,7 @@ This project is perfect for learning Git version control:
 
 2. **Connect to GitHub**:
    ```bash
-   git remote add origin https://github.com/yourusername/taskflow.git
+   git remote add origin https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
    git push -u origin main
    ```
 

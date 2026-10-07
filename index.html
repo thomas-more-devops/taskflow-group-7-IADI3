@@ -1,14 +1,22 @@
 <!DOCTYPE html>
+<!-- Language of the page: helps screen readers choose the right pronunciation -->
 <html lang="en">
 <head>
+    <!-- Character encoding: UTF-8 is required for the emoji icons used in the UI -->
     <meta charset="UTF-8">
+    <!-- Viewport: makes the layout responsive on mobile devices (see media queries in styles/main.css) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Page title shown in the browser tab and in search results -->
     <title>TaskFlow - Task Management App</title>
+    <!-- Main stylesheet (all styles live in styles/main.css) -->
     <link rel="stylesheet" href="styles/main.css">
+    <!-- Google Fonts: Inter typeface in weights 300-700 (display=swap shows fallback text while the font loads) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Page wrapper: centres the content and limits its width -->
     <div class="container">
+        <!-- HEADER: app title and tagline -->
         <header class="header">
             <div class="header-content">
                 <h1 class="app-title">
@@ -19,10 +27,14 @@
             </div>
         </header>
 
+        <!-- MAIN CONTENT: contains the three sections - input, task list, statistics -->
         <main class="main">
+            <!-- SECTION 1 - Add task: text field + button (handled by bindEvents() in scripts/app.js) -->
             <div class="task-input-section">
                 <div class="input-container">
+                    <!-- Task input: JS reads its value by id="taskInput"; pressing Enter also adds the task -->
                     <input type="text" id="taskInput" placeholder="What needs to be done?" class="task-input">
+                    <!-- Add button: JS attaches its click listener using id="addTaskBtn" -->
                     <button id="addTaskBtn" class="add-btn">
                         <span class="add-icon">+</span>
                         Add Task
@@ -30,14 +42,18 @@
                 </div>
             </div>
 
+            <!-- SECTION 2 - Task list -->
             <div class="tasks-section">
                 <div class="tasks-header">
                     <h2>Your Tasks</h2>
+                    <!-- Counter text ("0 tasks") - updated by updateStats() -->
                     <span id="taskCount" class="task-count">0 tasks</span>
                 </div>
+                <!-- Task list container: renderTasks() fills this element with one .task-item per task -->
                 <div id="tasksList" class="tasks-list">
                     <!-- Tasks will be dynamically added here -->
                 </div>
+                <!-- Empty state: shown instead of the list when there are no tasks (toggled by renderTasks()) -->
                 <div id="emptyState" class="empty-state">
                     <div class="empty-icon">✨</div>
                     <h3>No tasks yet</h3>
@@ -45,17 +61,21 @@
                 </div>
             </div>
 
+            <!-- SECTION 3 - Statistics: three cards, numbers are filled in by updateStats() -->
             <div class="stats-section">
                 <div class="stats-grid">
                     <div class="stat-card">
+                        <!-- Total number of tasks -->
                         <span class="stat-number" id="totalTasks">0</span>
                         <span class="stat-label">Total Tasks</span>
                     </div>
                     <div class="stat-card">
+                        <!-- Number of completed tasks -->
                         <span class="stat-number" id="completedTasks">0</span>
                         <span class="stat-label">Completed</span>
                     </div>
                     <div class="stat-card">
+                        <!-- Number of tasks still to do (total - completed) -->
                         <span class="stat-number" id="pendingTasks">0</span>
                         <span class="stat-label">Pending</span>
                     </div>
@@ -63,11 +83,13 @@
             </div>
         </main>
 
+        <!-- FOOTER: copyright notice -->
         <footer class="footer">
-            <p>&copy; 2024 TaskFlow. Built with HTML, CSS, and JavaScript.</p>
+            <p>&copy; 2026 TaskFlow. Built with HTML, CSS, and JavaScript.</p>
         </footer>
     </div>
 
+    <!-- JavaScript is loaded last so that all elements above already exist when the script runs -->
     <script src="scripts/app.js"></script>
 </body>
 </html>

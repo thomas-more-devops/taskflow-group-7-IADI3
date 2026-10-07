@@ -32,8 +32,8 @@
    ```bash
    # Download ZIP from GitHub
    # OR clone the repository
-   git clone https://github.com/yourusername/taskflow.git
-   cd taskflow
+   git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
+   cd taskflow-group-7-IADI3
    ```
 
 2. **Open in Browser**
@@ -50,10 +50,10 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/taskflow.git
+git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
 
 # Navigate to project directory
-cd taskflow
+cd taskflow-group-7-IADI3
 
 # Verify file structure
 ls -la
@@ -74,19 +74,19 @@ xdg-open index.html
    ```bash
    # Accept assignment from instructor
    # Repository will be automatically created
-   git clone https://github.com/classroom/your-assignment-repo.git
-   cd taskflow
+   git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
+   cd taskflow-group-7-IADI3
    ```
 
 2. **Fork and Clone**
    ```bash
    # Fork repository on GitHub
    # Clone your fork
-   git clone https://github.com/yourusername/taskflow.git
-   cd taskflow
+   git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
+   cd taskflow-group-7-IADI3
    
    # Set upstream for updates
-   git remote add upstream https://github.com/original-owner/taskflow.git
+   git remote add upstream https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
    ```
 
 ### For Developers (Contribution)
@@ -94,8 +94,8 @@ xdg-open index.html
 1. **Development Environment**
    ```bash
    # Clone repository
-   git clone https://github.com/original-owner/taskflow.git
-   cd taskflow
+   git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
+   cd taskflow-group-7-IADI3
    
    # Create development branch
    git checkout -b feature/your-feature-name
@@ -159,7 +159,7 @@ xdg-open index.html
    - Click Save
 
 3. **Access Your Site**
-   - URL: `https://yourusername.github.io/taskflow`
+   - URL: `https://thomas-more-devops.github.io/taskflow-group-7-IADI3/`
    - Wait 2-5 minutes for initial deployment
    - Site updates automatically with new commits
 
