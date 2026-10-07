@@ -357,9 +357,9 @@ Potential improvements for version 2.0 (each one is tracked as a [GitHub issue](
 Thanks to all the students and developers who contributed to this project:
 
 ### Course Contributors (Week 2 - Git Fundamentals)
-- [@GITHUB_USERNAME_A](https://github.com/GITHUB_USERNAME_A) - Student A: HTML documentation comments
-- [@GITHUB_USERNAME_B](https://github.com/GITHUB_USERNAME_B) - Student B: CSS comments explaining design choices
-- [@GITHUB_USERNAME_C](https://github.com/GITHUB_USERNAME_C) - Student C: JavaScript comments and error handling
+- [@s6v41k](https://github.com/s6v41k) - Student A: HTML documentation comments
+- [@GorginuoTWF](https://github.com/GorginuoTWF) - Student B: CSS comments explaining design choices
+- [@Babaika328](https://github.com/Babaika328) - Student C: JavaScript comments and error handling and ARCHITECTURE.md explaining code structure
 
 ### How to Become a Contributor
 1. Complete the [setup instructions](docs/SETUP.md)
