@@ -1,31 +1,10 @@
-/* ==========================================================================
-   TaskFlow - Main Stylesheet
-   ==========================================================================
-   DESIGN OVERVIEW
-   - Look & feel: a "card" interface - white, slightly transparent cards with
-     rounded corners and soft shadows floating on a purple gradient background.
-   - Colour palette (Tailwind-like greys + indigo/purple accent):
-       Primary   #667eea (indigo)   Secondary #764ba2 (purple)
-       Success   #48bb78 (green)    Error     #e53e3e (red)
-       Text      #2d3748 / #4a5568 / #718096 (dark -> light grey)
-   - Typography: Inter (loaded in index.html) with system fonts as fallback.
-   - Layout: Flexbox for rows/columns, CSS Grid for the statistics cards.
-   - Units: rem for spacing and font sizes so everything scales with the
-     user's browser font-size setting.
-   - Responsive: breakpoints at 768px (tablet) and 480px (phone).
-   ========================================================================== */
-
-/* ---------- Reset and Base Styles ---------- */
-/* Reset: remove the browser default margins/padding so spacing is fully controlled by this file.
-   border-box makes width include padding and border, which makes sizing predictable. */
+/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Body: the gradient on the whole page gives depth and makes the white cards stand out.
-   line-height 1.6 improves readability; #333 on a light card is high-contrast. */
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -35,8 +14,6 @@ body {
 }
 
 /* Container */
-/* Container: max-width 800px keeps lines short and readable on large screens;
-   "margin: 0 auto" centres it. Flex column + min-height lets the footer stay at the bottom. */
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -52,8 +29,6 @@ body {
     margin-bottom: 3rem;
 }
 
-/* Semi-transparent white (0.95) + blur creates a soft "frosted glass" effect. The large radius and
-   shadow make the header the most prominent card. */
 .header-content {
     background: rgba(255, 255, 255, 0.95);
     padding: 2rem;
@@ -62,7 +37,6 @@ body {
     backdrop-filter: blur(10px);
 }
 
-/* Title uses flex so the emoji icon and text stay centred and evenly spaced (gap). */
 .app-title {
     font-size: 2.5rem;
     font-weight: 700;
@@ -85,7 +59,6 @@ body {
 }
 
 /* Main Content */
-/* flex: 1 makes the main area fill the free space and pushes the footer down. */
 .main {
     flex: 1;
 }
@@ -95,7 +68,6 @@ body {
     margin-bottom: 2rem;
 }
 
-/* Input card: flex row so the field grows and the button keeps its natural size. */
 .input-container {
     background: rgba(255, 255, 255, 0.95);
     padding: 1.5rem;
@@ -106,7 +78,33 @@ body {
     align-items: center;
 }
 
-/* flex: 1 = field takes all remaining width. Light grey background changes to white on focus. */
+.input-options {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.category-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: #f8fafc;
+    color: #4a5568;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.category-select:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
 .task-input {
     flex: 1;
     border: 2px solid #e2e8f0;
@@ -118,8 +116,6 @@ body {
     background: #f8fafc;
 }
 
-/* Focus state: the default outline is replaced by a coloured border + soft glow (box-shadow)
-   so keyboard users still see clearly where they are. */
 .task-input:focus {
     outline: none;
     border-color: #667eea;
@@ -131,8 +127,6 @@ body {
     color: #a0aec0;
 }
 
-/* Primary action button: same gradient as the page background ties the UI together;
-   white-space: nowrap prevents "Add Task" from wrapping onto two lines. */
 .add-btn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -149,13 +143,11 @@ body {
     white-space: nowrap;
 }
 
-/* Hover: lift the button 2px and add a coloured shadow as feedback that it is clickable. */
 .add-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
-/* Active (pressed): button drops back down, giving a physical "click" feeling. */
 .add-btn:active {
     transform: translateY(0);
 }
@@ -165,8 +157,61 @@ body {
     font-weight: bold;
 }
 
+/* Category Filter Section */
+.category-filters {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.category-filters h3 {
+    margin-bottom: 1rem;
+    color: #2d3748;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.category-filter-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+
+.category-filter-btn {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    color: #4a5568;
+}
+
+.category-filter-btn:hover {
+    background: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+.category-filter-btn.active {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.filter-icon {
+    font-size: 1rem;
+}
+
 /* Tasks Section */
-/* Task list card - same card style (radius, shadow, transparency) as the other sections for consistency. */
 .tasks-section {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 16px;
@@ -190,7 +235,6 @@ body {
     color: #2d3748;
 }
 
-/* "Pill" badge: a large border-radius (20px) turns the box into a rounded pill. */
 .task-count {
     background: #e2e8f0;
     color: #4a5568;
@@ -200,15 +244,12 @@ body {
     font-weight: 500;
 }
 
-/* Vertical stack of tasks with equal spacing. renderTasks() switches this between display:none and flex. */
 .tasks-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 }
 
-/* Single task row: space-between puts the text on the left and the action buttons on the right.
-   The transition makes the hover effect below smooth. */
 .task-item {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -221,21 +262,51 @@ body {
     cursor: pointer;
 }
 
-/* Hover: nudge the row 4px to the right + shadow, a subtle hint that the row is interactive. */
 .task-item:hover {
     transform: translateX(4px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border-color: #cbd5e0;
 }
 
-/* Completed tasks: green tint (success colour) and reduced opacity so they visually "fade back". */
 .task-item.completed {
     background: #f0fff4;
     border-color: #9ae6b4;
     opacity: 0.8;
 }
 
-/* flex: 1 lets the checkbox + text take all space, leaving the buttons at the right edge. */
+/* Category-based styling */
+.task-item.category-work {
+    border-left: 4px solid #3182ce;
+}
+
+.task-item.category-personal {
+    border-left: 4px solid #38a169;
+}
+
+.task-item.category-shopping {
+    border-left: 4px solid #ed8936;
+}
+
+.task-item.category-health {
+    border-left: 4px solid #e53e3e;
+}
+
+.task-item.category-study {
+    border-left: 4px solid #805ad5;
+}
+
+.category-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: white;
+}
+
 .task-content {
     display: flex;
     align-items: center;
@@ -243,8 +314,6 @@ body {
     flex: 1;
 }
 
-/* Custom checkbox built from a div (a native checkbox is hard to style consistently across browsers).
-   position: relative is needed so the check mark (::after) can be centred inside it. */
 .task-checkbox {
     width: 20px;
     height: 20px;
@@ -260,8 +329,6 @@ body {
     border-color: #48bb78;
 }
 
-/* The check mark is drawn with a pseudo-element, so no extra HTML or image is needed.
-   top/left 50% + translate(-50%, -50%) centres it exactly. */
 .task-checkbox.checked::after {
     content: '✓';
     color: white;
@@ -279,7 +346,6 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Strikethrough + lighter grey = classic, instantly understood "done" style. */
 .task-item.completed .task-text {
     text-decoration: line-through;
     color: #718096;
@@ -290,7 +356,6 @@ body {
     gap: 0.5rem;
 }
 
-/* Icon buttons have no background/border until hovered, which keeps the row visually quiet. */
 .task-btn {
     background: none;
     border: none;
@@ -301,7 +366,6 @@ body {
     font-size: 1.1rem;
 }
 
-/* Colour coding: blue = edit (neutral/safe), red = delete (destructive). */
 .edit-btn {
     color: #3182ce;
 }
@@ -319,7 +383,6 @@ body {
 }
 
 /* Empty State */
-/* Empty state: friendly message in muted grey, shown when there are no tasks. */
 .empty-state {
     text-align: center;
     padding: 3rem 2rem;
@@ -345,15 +408,13 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Grid with auto-fit: as many 150px+ columns as fit; cards share the width equally (1fr)
-   and wrap automatically on narrow screens without needing a media query. */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
+    margin-bottom: 2rem;
 }
 
-/* Subtle grey gradient makes each statistic look like a separate tile. */
 .stat-card {
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     padding: 1.5rem;
@@ -362,7 +423,15 @@ body {
     border: 1px solid #e2e8f0;
 }
 
-/* display: block puts the big number on its own line above the label. */
+.stat-card.category-stats {
+    background: linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%);
+    border-color: #81e6d9;
+}
+
+.category-stats .stat-number {
+    color: #38a169;
+}
+
 .stat-number {
     display: block;
     font-size: 2rem;
@@ -377,8 +446,91 @@ body {
     font-weight: 500;
 }
 
+.detailed-analytics {
+    border-top: 2px solid #f1f5f9;
+    padding-top: 1.5rem;
+}
+
+.analytics-section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.category-stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.category-stat-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.category-stat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.category-icon {
+    font-size: 1.2rem;
+}
+
+.category-name {
+    flex: 1;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.category-total {
+    background: #e2e8f0;
+    color: #4a5568;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.category-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    color: #718096;
+    white-space: nowrap;
+}
+
+.no-categories {
+    color: #718096;
+    font-style: italic;
+    text-align: center;
+    padding: 2rem;
+}
+
 /* Footer */
-/* Footer text is semi-transparent white because it sits directly on the purple background, not on a card. */
 .footer {
     text-align: center;
     margin-top: 2rem;
@@ -388,54 +540,89 @@ body {
 }
 
 /* Responsive Design */
-/* Tablet and below: reduce padding, stack the input and button vertically so the
-   button is full-width and easy to tap with a thumb. */
 @media (max-width: 768px) {
     .container {
         padding: 1rem 0.5rem;
     }
-    
+
     .app-title {
         font-size: 2rem;
     }
-    
+
     .input-container {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
+    .input-options {
+        grid-template-columns: 1fr;
+        order: -1;
+    }
+
     .add-btn {
         justify-content: center;
     }
-    
+
     .task-item {
         padding: 1rem;
     }
-    
+
     .tasks-header {
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
     }
+
+    .category-filter-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .category-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .category-progress {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .progress-text {
+        text-align: center;
+    }
 }
 
-/* Small phones: statistics cards go into a single column and the title shrinks. */
 @media (max-width: 480px) {
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .app-title {
         font-size: 1.75rem;
     }
-    
+
     .header-content {
         padding: 1.5rem;
+    }
+
+    .task-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .category-badge {
+        margin-left: 0;
+        align-self: flex-start;
+    }
+
+    .category-filter-buttons {
+        grid-template-columns: 1fr;
     }
 }
 
 /* Animation Classes */
-/* slideIn: new elements fade in while moving up 20px. Short (0.3s) so it feels responsive, not slow. */
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -447,7 +634,6 @@ body {
     }
 }
 
-/* Applies the animation to every task row each time the list is re-rendered. */
 .task-item {
     animation: slideIn 0.3s ease;
 }
