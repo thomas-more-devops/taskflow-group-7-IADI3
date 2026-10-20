@@ -1,4 +1,20 @@
 class TaskFlow {
+    static CATEGORY_ICONS = {
+        work: '💼',
+        personal: '📝',
+        shopping: '🛒',
+        health: '🏥',
+        study: '📚'
+    };
+
+    static CATEGORY_COLORS = {
+        work: '#3182ce',
+        personal: '#38a169',
+        shopping: '#ed8936',
+        health: '#e53e3e',
+        study: '#805ad5'
+    };
+
     constructor() {
         this.tasks = this.loadTasks();
         this.taskIdCounter = this.getNextTaskId();
@@ -120,11 +136,12 @@ class TaskFlow {
     setCategoryFilter(category) {
         this.currentCategoryFilter = category;
 
-        // Update button states
+        // Update button states (class + aria-pressed, for screen reader users)
         document.querySelectorAll('.category-filter-btn').forEach(btn => {
-            btn.classList.remove('active');
+            const isActive = btn.dataset.category === category;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
-        document.querySelector(`[data-category="${category}"]`).classList.add('active');
 
         this.renderTasks();
     }
@@ -141,25 +158,11 @@ class TaskFlow {
     }
 
     getCategoryIcon(category) {
-        const icons = {
-            work: '💼',
-            personal: '📝',
-            shopping: '🛒',
-            health: '🏥',
-            study: '📚'
-        };
-        return icons[category] || '📝';
+        return TaskFlow.CATEGORY_ICONS[category] || '📝';
     }
 
     getCategoryColor(category) {
-        const colors = {
-            work: '#3182ce',
-            personal: '#38a169',
-            shopping: '#ed8936',
-            health: '#e53e3e',
-            study: '#805ad5'
-        };
-        return colors[category] || '#38a169';
+        return TaskFlow.CATEGORY_COLORS[category] || '#38a169';
     }
 
     getPriorityValue(priority) {
