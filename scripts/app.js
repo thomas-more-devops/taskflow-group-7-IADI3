@@ -463,12 +463,21 @@ class TaskFlow {
                 ...task,
                 priority: task.priority || 'medium',
                 category: task.category || 'personal',
-                dueDate: task.dueDate || null
+                dueDate: this.sanitizeDueDate(task.dueDate)
             }));
         } catch (error) {
             console.error('Failed to load tasks:', error);
             return [];
         }
+    }
+
+    sanitizeDueDate(dueDate) {
+        // Defense in depth: localStorage can be edited directly (e.g. via devtools),
+        // so don't trust a stored dueDate is still a valid YYYY-MM-DD string.
+        if (!dueDate || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate) || isNaN(new Date(dueDate).getTime())) {
+            return null;
+        }
+        return dueDate;
     }
 
     getNextTaskId() {
