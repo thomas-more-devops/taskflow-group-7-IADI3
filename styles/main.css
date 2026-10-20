@@ -85,6 +85,25 @@ body {
     align-items: center;
 }
 
+.priority-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: #f8fafc;
+    color: #4a5568;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.priority-select:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
 .category-select {
     border: 2px solid #e2e8f0;
     border-radius: 8px;
@@ -274,33 +293,55 @@ body {
     opacity: 0.8;
 }
 
-/* Category-based styling */
-.task-item.category-work {
-    border-left: 4px solid #3182ce;
-}
-
-.task-item.category-personal {
-    border-left: 4px solid #38a169;
-}
-
-.task-item.category-shopping {
-    border-left: 4px solid #ed8936;
-}
-
-.task-item.category-health {
+/* Priority-based styling (takes precedence on the left border) */
+.task-item.priority-high {
     border-left: 4px solid #e53e3e;
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
 }
 
-.task-item.category-study {
-    border-left: 4px solid #805ad5;
+.task-item.priority-medium {
+    border-left: 4px solid #ed8936;
+    background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%);
 }
 
-.category-badge {
+.task-item.priority-low {
+    border-left: 4px solid #38a169;
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+}
+
+.priority-badge {
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 600;
     margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.priority-badge.priority-high {
+    background: #e53e3e;
+    color: white;
+}
+
+.priority-badge.priority-medium {
+    background: #ed8936;
+    color: white;
+}
+
+.priority-badge.priority-low {
+    background: #38a169;
+    color: white;
+}
+
+/* Category badge (color is set inline per category) */
+.category-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.25rem;
@@ -312,6 +353,7 @@ body {
     align-items: center;
     gap: 1rem;
     flex: 1;
+    flex-wrap: wrap;
 }
 
 .task-checkbox {
@@ -421,6 +463,15 @@ body {
     border-radius: 12px;
     text-align: center;
     border: 1px solid #e2e8f0;
+}
+
+.stat-card.priority-stats {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border-color: #feb2b2;
+}
+
+.priority-stats .stat-number {
+    color: #e53e3e;
 }
 
 .stat-card.category-stats {
@@ -573,6 +624,11 @@ body {
         align-items: flex-start;
     }
 
+    .priority-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+
     .category-filter-buttons {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -610,6 +666,11 @@ body {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
+    }
+
+    .priority-badge {
+        margin-left: 0;
+        align-self: flex-start;
     }
 
     .category-badge {

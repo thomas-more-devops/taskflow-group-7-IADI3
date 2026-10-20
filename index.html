@@ -22,8 +22,13 @@
         <main class="main">
             <div class="task-input-section">
                 <div class="input-container">
-                    <input type="text" id="taskInput" placeholder="What needs to be done?" class="task-input">
+                    <input type="text" id="taskInput" placeholder="Enter your task here..." class="task-input">
                     <div class="input-options">
+                        <select id="prioritySelect" class="priority-select">
+                            <option value="medium">Medium Priority</option>
+                            <option value="high">High Priority</option>
+                            <option value="low">Low Priority</option>
+                        </select>
                         <select id="categorySelect" class="category-select">
                             <option value="personal">📝 Personal</option>
                             <option value="work">💼 Work</option>
@@ -98,6 +103,10 @@
                     <div class="stat-card">
                         <span class="stat-number" id="pendingTasks">0</span>
                         <span class="stat-label">Pending</span>
+                    </div>
+                    <div class="stat-card priority-stats">
+                        <span class="stat-number" id="highPriorityTasks">0</span>
+                        <span class="stat-label">High Priority</span>
                     </div>
                     <div class="stat-card category-stats">
                         <span class="stat-number" id="categoriesUsed">0</span>
