@@ -1,40 +1,29 @@
 <!DOCTYPE html>
-<!-- Language of the page: helps screen readers choose the right pronunciation -->
 <html lang="en">
 <head>
-    <!-- Character encoding: UTF-8 is required for the emoji icons used in the UI -->
     <meta charset="UTF-8">
-    <!-- Viewport: makes the layout responsive on mobile devices (see media queries in styles/main.css) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Page title shown in the browser tab and in search results -->
-    <title>TaskFlow - Task Management App</title>
-    <!-- Main stylesheet (all styles live in styles/main.css) -->
+    <title>TaskFlow - Complete Task Management App</title>
     <link rel="stylesheet" href="styles/main.css">
-    <!-- Google Fonts: Inter typeface in weights 300-700 (display=swap shows fallback text while the font loads) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Page wrapper: centres the content and limits its width -->
     <div class="container">
-        <!-- HEADER: app title and tagline -->
         <header class="header">
             <div class="header-content">
                 <h1 class="app-title">
                     <span class="icon">📋</span>
                     TaskFlow
                 </h1>
-                <p class="app-subtitle">Streamline your productivity</p>
+                <p class="app-subtitle">Complete productivity management system</p>
             </div>
         </header>
 
-        <!-- MAIN CONTENT: contains the three sections - input, task list, statistics -->
         <main class="main">
-            <!-- SECTION 1 - Add task: text field + button (handled by bindEvents() in scripts/app.js) -->
+            <!-- Task Input Section -->
             <div class="task-input-section">
                 <div class="input-container">
-                    <!-- Task input: JS reads its value by id="taskInput"; pressing Enter also adds the task -->
                     <input type="text" id="taskInput" placeholder="What needs to be done?" class="task-input">
-                    <!-- Add button: JS attaches its click listener using id="addTaskBtn" -->
                     <button id="addTaskBtn" class="add-btn">
                         <span class="add-icon">+</span>
                         Add Task
@@ -42,54 +31,114 @@
                 </div>
             </div>
 
-            <!-- SECTION 2 - Task list -->
+            <!-- Search & Filter Section -->
+            <div class="search-filter-section">
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search tasks..." class="search-input">
+                        <button id="clearSearch" class="clear-search" title="Clear search">✕</button>
+                    </div>
+                </div>
+
+                <div class="filter-container">
+                    <div class="filter-section">
+                        <h3>Quick Filters:</h3>
+                        <div class="quick-filters">
+                            <button class="filter-btn active" data-filter="all">
+                                <span class="filter-icon">📋</span>
+                                All Tasks
+                            </button>
+                            <button class="filter-btn" data-filter="completed">
+                                <span class="filter-icon">✅</span>
+                                Completed
+                            </button>
+                            <button class="filter-btn" data-filter="pending">
+                                <span class="filter-icon">⏳</span>
+                                Pending
+                            </button>
+                            <button class="filter-btn" data-filter="recent">
+                                <span class="filter-icon">🆕</span>
+                                Recent
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="advanced-filters">
+                        <button id="toggleAdvanced" class="toggle-advanced">
+                            <span>Advanced Options</span>
+                            <span class="toggle-icon">▼</span>
+                        </button>
+                        <div id="advancedPanel" class="advanced-panel">
+                            <div class="filter-group">
+                                <label>Sort by:</label>
+                                <select id="sortSelect" class="sort-select">
+                                    <option value="created-desc">Newest First</option>
+                                    <option value="created-asc">Oldest First</option>
+                                    <option value="alphabetical">Alphabetical</option>
+                                    <option value="completion">Completion Status</option>
+                                </select>
+                            </div>
+                            <div class="filter-actions">
+                                <button id="clearAllFilters" class="clear-filters-btn">Clear All Filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Section -->
             <div class="tasks-section">
                 <div class="tasks-header">
                     <h2>Your Tasks</h2>
-                    <!-- Counter text ("0 tasks") - updated by updateStats() -->
-                    <span id="taskCount" class="task-count">0 tasks</span>
+                    <div class="header-info">
+                        <span id="searchResults" class="search-results"></span>
+                        <span id="taskCount" class="task-count">0 tasks</span>
+                    </div>
                 </div>
-                <!-- Task list container: renderTasks() fills this element with one .task-item per task -->
                 <div id="tasksList" class="tasks-list">
                     <!-- Tasks will be dynamically added here -->
                 </div>
-                <!-- Empty state: shown instead of the list when there are no tasks (toggled by renderTasks()) -->
                 <div id="emptyState" class="empty-state">
                     <div class="empty-icon">✨</div>
                     <h3>No tasks yet</h3>
                     <p>Add your first task above to get started!</p>
                 </div>
+                <div id="noResults" class="no-results" style="display: none;">
+                    <div class="empty-icon">🔍</div>
+                    <h3>No tasks found</h3>
+                    <p>Try adjusting your search or filters</p>
+                </div>
             </div>
 
-            <!-- SECTION 3 - Statistics: three cards, numbers are filled in by updateStats() -->
+            <!-- Statistics Section -->
             <div class="stats-section">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <!-- Total number of tasks -->
                         <span class="stat-number" id="totalTasks">0</span>
                         <span class="stat-label">Total Tasks</span>
                     </div>
                     <div class="stat-card">
-                        <!-- Number of completed tasks -->
                         <span class="stat-number" id="completedTasks">0</span>
                         <span class="stat-label">Completed</span>
                     </div>
                     <div class="stat-card">
-                        <!-- Number of tasks still to do (total - completed) -->
                         <span class="stat-number" id="pendingTasks">0</span>
                         <span class="stat-label">Pending</span>
+                    </div>
+                    <div class="stat-card search-stats">
+                        <span class="stat-number" id="filteredTasks">0</span>
+                        <span class="stat-label">Shown</span>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- FOOTER: copyright notice -->
         <footer class="footer">
-            <p>&copy; 2026 TaskFlow. Built with HTML, CSS, and JavaScript.</p>
+            <p>&copy; 2024 TaskFlow. Complete task management with search and advanced filtering.</p>
         </footer>
     </div>
 
-    <!-- JavaScript is loaded last so that all elements above already exist when the script runs -->
     <script src="scripts/app.js"></script>
 </body>
 </html>
