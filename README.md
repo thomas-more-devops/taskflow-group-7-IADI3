@@ -333,13 +333,16 @@ This TaskFlow application demonstrates:
 - **Performance**: Optimized for fast loading and smooth interactions
 - **Maintainability**: Clean, well-documented, and structured code
 
+## ✅ Shipped in v2.0.0
+
+- [x] **Task Categories**: Color-coded categories (Work, Personal, Shopping, Health, Study)
+- [x] **Due Dates**: Deadline tracking with overdue/due-today detection
+- [x] **Priority Levels**: High, Medium, Low priority sorting
+- [x] **Search & Filter**: Advanced task filtering, quick filters, and sorting
+
 ## 🎯 Future Enhancements
 
-Potential improvements for version 2.0 (each one is tracked as a [GitHub issue](https://github.com/thomas-more-devops/taskflow-group-7-IADI3/issues)):
-- [ ] **Task Categories**: Color-coded categories (Work, Personal, Shopping)
-- [ ] **Due Dates**: Calendar integration and deadline reminders
-- [ ] **Priority Levels**: High, Medium, Low priority sorting
-- [ ] **Search & Filter**: Advanced task filtering capabilities
+Potential improvements for version 2.1+ (each one is tracked as a [GitHub issue](https://github.com/thomas-more-devops/taskflow-group-7-IADI3/issues)):
 - [ ] **Dark Mode**: Toggle between light and dark themes
 - [ ] **Collaboration**: Share tasks with team members
 - [ ] **Sync**: Cloud synchronization across devices
@@ -369,7 +372,15 @@ Thanks to all the students and developers who contributed to this project:
 
 ## 🔄 Version History
 
-### v1.0.0 (Current)
+### v2.0.0 (Current)
+- 🚀 Task priority levels (High/Medium/Low) with color-coded badges and sorting
+- 🚀 Task categories (Work, Personal, Shopping, Health, Study) with filtering and breakdown stats
+- 🚀 Due date tracking with overdue/due-today detection and animated warnings
+- 🚀 Real-time search with term highlighting, quick filters, and advanced sorting
+- 🎨 Professional repository structure: issue/PR templates, CI pipeline, contributing guidelines
+- 🐛 Fixed CI pipeline silently skipping devDependency install (masked ESLint failures)
+
+### v1.0.0
 - ✨ Initial release with core functionality
 - 🎨 Modern, responsive design
 - 💾 Local storage persistence
