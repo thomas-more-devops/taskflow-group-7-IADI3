@@ -50,11 +50,16 @@ class TaskFlow {
             }
         });
 
-        // Search functionality
+        // Search functionality (debounced to avoid re-rendering on every keystroke)
+        let searchDebounceTimer = null;
         searchInput.addEventListener('input', (e) => {
-            this.searchQuery = e.target.value.toLowerCase();
-            this.renderTasks();
-            this.updateSearchResults();
+            const value = e.target.value;
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => {
+                this.searchQuery = value.toLowerCase();
+                this.renderTasks();
+                this.updateSearchResults();
+            }, 180);
         });
 
         clearSearch.addEventListener('click', () => {
@@ -430,9 +435,17 @@ class TaskFlow {
     highlightSearchTerm(text) {
         if (!this.searchQuery) return this.escapeHtml(text);
 
-        const regex = new RegExp(`(${this.escapeRegex(this.searchQuery)})`, 'gi');
         const escapedText = this.escapeHtml(text);
-        return escapedText.replace(regex, '<mark class="search-highlight">$1</mark>');
+        return escapedText.replace(this.getSearchHighlightRegex(), '<mark class="search-highlight">$1</mark>');
+    }
+
+    getSearchHighlightRegex() {
+        // Cached per searchQuery so renderTasks() doesn't recompile a RegExp for every task
+        if (this._highlightRegexQuery !== this.searchQuery) {
+            this._highlightRegexQuery = this.searchQuery;
+            this._highlightRegex = new RegExp(`(${this.escapeRegex(this.searchQuery)})`, 'gi');
+        }
+        return this._highlightRegex;
     }
 
     escapeRegex(string) {
