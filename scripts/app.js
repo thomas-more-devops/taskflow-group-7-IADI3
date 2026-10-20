@@ -160,6 +160,7 @@ class TaskFlow {
   }
 
   deleteTask(taskId) {
+    // eslint-disable-next-line no-alert -- intentional UX pattern: confirm destructive deletes
     if (confirm('Are you sure you want to delete this task?')) {
       this.tasks = this.tasks.filter(task => task.id !== taskId);
       this.saveTasks();
@@ -188,6 +189,7 @@ class TaskFlow {
   editTask(taskId) {
     const task = this.tasks.find(task => task.id === taskId);
     if (task) {
+      // eslint-disable-next-line no-alert -- intentional UX pattern: inline prompt for quick edits
       const newText = prompt('Edit task:', task.text);
       if (newText !== null && newText.trim() !== '') {
         task.text = newText.trim();
@@ -746,6 +748,7 @@ class TaskFlow {
   }
 
   clearAllTasks() {
+    // eslint-disable-next-line no-alert -- intentional UX pattern: confirm destructive bulk delete
     if (confirm('Are you sure you want to delete ALL tasks? This cannot be undone.')) {
       this.tasks = [];
       this.saveTasks();
