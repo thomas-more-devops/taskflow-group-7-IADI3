@@ -90,7 +90,10 @@ module.exports = {
     
     // TaskFlow globals
     taskFlow: 'writable',                   // Main application instance
-    TaskFlow: 'readonly'                    // TaskFlow class
+    TaskFlow: 'readonly',                   // TaskFlow class
+
+    // CommonJS export guard at the bottom of app.js (`typeof module !== 'undefined'`)
+    module: 'readonly'
   },
 
   // Override rules for specific files
