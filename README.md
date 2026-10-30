@@ -8,7 +8,7 @@
 [https://thomas-more-devops.github.io/taskflow-group-7-IADI3/](https://thomas-more-devops.github.io/taskflow-group-7-IADI3/)
 
 ## 📊 Project Status
-![TaskFlow](https://img.shields.io/badge/TaskFlow-v3.0.0-blue.svg)
+![TaskFlow](https://img.shields.io/badge/TaskFlow-v4.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/thomas-more-devops/taskflow-group-7-IADI3)
 ![GitHub issues](https://img.shields.io/github/issues/thomas-more-devops/taskflow-group-7-IADI3)
@@ -58,47 +58,70 @@ This project is part of the **Bachelor International Business Management - Data 
 
 ## 🏃 How to Run
 
-TaskFlow now runs as a Node.js/Express backend serving a static frontend, and is fully containerized with Docker. Two ways to run it:
+As of v4.0.0, TaskFlow is two containers: the Node.js/Express app and MongoDB, talking to each other over a private Docker network. Tasks persist in a named volume, so they survive container restarts and even container removal.
 
-### Option A: Docker (recommended)
+### Option A: Docker Compose (recommended, one command)
+
+Requires Docker with the Compose plugin (`docker compose version`).
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
 cd taskflow-group-7-IADI3
 
-# 2. Build the image
-docker build -t taskflow:1.1 .
-
-# 3. Run the container
-docker run -d -p 3000:3000 --name taskflow-app taskflow:1.1
-
-# 4. Open the app
-# http://localhost:3000
+docker compose up -d
+# open http://localhost:3000
 ```
 
-Useful commands:
 ```bash
-docker logs taskflow-app        # View server logs
-docker stop taskflow-app        # Stop the container
-docker rm taskflow-app          # Remove the container
+docker compose logs taskflow-app   # View app logs
+docker compose down                # Stop and remove both containers (volume is kept)
 ```
 
-If port 3000 is already taken on your machine, map to a different host port instead:
+### Option B: Manual Docker (network + volume + two containers)
+
 ```bash
-docker run -d -p 3001:3000 --name taskflow-app taskflow:1.1
-# then open http://localhost:3001
+git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
+cd taskflow-group-7-IADI3
+
+# 1. Create the network and volume (one-time)
+docker network create taskflow-net
+docker volume create taskflow-db-data
+
+# 2. Start MongoDB (no -p: not reachable from the host on purpose)
+docker run -d --name taskflow-db \
+  --network taskflow-net \
+  -v taskflow-db-data:/data/db \
+  mongo:8.0.15
+
+# 3. Build and start the app
+docker build -t taskflow:2.0 .
+docker run -d --name taskflow-app \
+  --network taskflow-net \
+  -p 3000:3000 \
+  -e DB_HOST=taskflow-db \
+  -e DB_NAME=taskflow \
+  taskflow:2.0
+
+# open http://localhost:3000
 ```
 
-### Option B: Node.js directly (no Docker)
+```bash
+docker logs taskflow-app   # Should show "MongoDB connected: taskflow-db:27017/taskflow"
+```
 
-Requires Node.js >= 22.
+If port 3000 is already taken on your machine, map to a different host port: `-p 3001:3000`, then open `http://localhost:3001`.
+
+See [docs/DATABASE_SETUP.md](docs/DATABASE_SETUP.md) for more detail on the network/volume setup, including how to inspect the database directly with `mongosh`.
+
+### Option C: Node.js directly (no Docker, needs your own MongoDB)
+
+Requires Node.js >= 22 and a MongoDB instance reachable at `DB_HOST:DB_PORT` (defaults to `mongodb:27017`).
 
 ```bash
 git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
 cd taskflow-group-7-IADI3
 npm install
-npm start
+DB_HOST=localhost DB_PORT=27017 npm start
 # open http://localhost:3000
 ```
 
@@ -117,6 +140,28 @@ curl http://localhost:3000/api/tasks
 # in the browser at http://localhost:3000 after a refresh.
 ```
 
+### Testing persistence
+
+These prove the volume actually works, not just that the app runs.
+
+**Removing the app container** (tasks live in the database, not the app):
+```bash
+docker rm -f taskflow-app
+docker run -d --name taskflow-app --network taskflow-net -p 3000:3000 -e DB_HOST=taskflow-db -e DB_NAME=taskflow taskflow:2.0
+# refresh http://localhost:3000 - your tasks are still there
+```
+
+**Removing both containers** (the real test — the database container itself is gone):
+```bash
+docker rm -f taskflow-app taskflow-db
+docker run -d --name taskflow-db --network taskflow-net -v taskflow-db-data:/data/db mongo:8.0.15
+docker run -d --name taskflow-app --network taskflow-net -p 3000:3000 -e DB_HOST=taskflow-db -e DB_NAME=taskflow taskflow:2.0
+# wait ~10s, refresh - your tasks are still there, because the new
+# database container mounted the same taskflow-db-data volume
+```
+
+**Why removing the volume mount loses data:** if you start `taskflow-db` *without* `-v taskflow-db-data:/data/db`, MongoDB writes to the container's own ephemeral writable layer instead of the named volume. That layer is deleted along with the container, so a fresh container starts with an empty `/data/db` and `GET /api/tasks` returns `[]`. We verified this directly: with the volume, two containers were removed and recreated and all tasks remained; without it, tasks disappeared on container removal. The volume — not the container — is what's durable.
+
 ### API Reference
 
 | Method | Endpoint          | Description              |
@@ -127,7 +172,11 @@ curl http://localhost:3000/api/tasks
 | PUT    | `/api/tasks/:id`  | Update a task              |
 | DELETE | `/api/tasks/:id`  | Delete a task              |
 
-Tasks are stored in-memory on the server, so they reset when the container/server restarts.
+Tasks are stored in MongoDB (via the `taskflow-db-data` volume), so they survive app and database container restarts/removal as long as the volume isn't deleted (`docker volume rm taskflow-db-data` or `docker compose down -v` would remove it).
+
+### A note on image size
+
+The Dockerfile is a multi-stage build (builder installs prod-only deps, production stage runs as the non-root `node` user). The app's own dependencies are small (~19MB with mongoose), but `node:22-alpine` itself is ~239MB in current builds, so the final `taskflow:2.0` image measures **~263MB** — over the 250MB target from the assignment. There isn't much further to trim while staying on `node:22-alpine` for both stages as required; switching to a smaller/distroless base would be the next lever if size becomes a hard constraint.
 
 ## 📋 Usage
 
@@ -175,7 +224,11 @@ This project demonstrates:
 ```
 taskflow/
 ├── server.js                # Express backend (REST API + static file serving)
-├── Dockerfile                # Container build
+├── database.js               # MongoDB connection (retries until ready)
+├── models/
+│   └── Task.js                # Mongoose schema
+├── Dockerfile                 # Multi-stage build, non-root user
+├── docker-compose.yml         # One-command startup (app + MongoDB)
 ├── .dockerignore
 ├── package.json
 ├── public/                   # Frontend, served by server.js
@@ -189,6 +242,7 @@ taskflow/
 │   ├── FEATURES.md
 │   ├── ARCHITECTURE.md
 │   ├── CONTRIBUTING.md
+│   ├── DATABASE_SETUP.md      # Network/volume/MongoDB setup detail
 │   └── RELEASE_RETRO_v2.0.0.md
 ├── .github/
 │   ├── workflows/ci.yml      # CI pipeline

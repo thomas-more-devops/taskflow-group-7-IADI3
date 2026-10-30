@@ -1,7 +1,7 @@
 {
   "name": "taskflow",
-  "version": "3.0.0",
-  "description": "Enhanced task management application with Node.js backend",
+  "version": "4.0.0",
+  "description": "Enhanced task management application with Node.js backend and MongoDB persistence",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
