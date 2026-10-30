@@ -100,7 +100,7 @@ module.exports = {
   overrides: [
     {
       // More lenient rules for main application file
-      files: ['scripts/app.js'],
+      files: ['public/scripts/app.js'],
       rules: {
         'max-lines-per-function': ['warn', 100],  // Allow longer methods in main class
         'complexity': ['warn', 15]                // Allow higher complexity in main file
@@ -108,7 +108,7 @@ module.exports = {
     },
     {
       // Specific rules for utility files
-      files: ['scripts/utils.js', 'scripts/helpers.js'],
+      files: ['public/scripts/utils.js', 'public/scripts/helpers.js'],
       rules: {
         'no-console': 'warn'                      // Prefer less console usage in utilities
       }
