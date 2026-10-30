@@ -3,10 +3,12 @@
 > A modern, responsive task management app built with HTML, CSS, and JavaScript
 
 ## 🚀 Live Demo
-**Try TaskFlow now:** [https://thomas-more-devops.github.io/taskflow-group-7-IADI3/](https://thomas-more-devops.github.io/taskflow-group-7-IADI3/)
+⚠️ As of v3.0.0, TaskFlow needs a running backend — the GitHub Pages link below is static-only, so the UI loads but task creation/editing will fail (no `/api/tasks` to call). Run it locally instead: see [How to Run](#-how-to-run).
+
+[https://thomas-more-devops.github.io/taskflow-group-7-IADI3/](https://thomas-more-devops.github.io/taskflow-group-7-IADI3/)
 
 ## 📊 Project Status
-![TaskFlow](https://img.shields.io/badge/TaskFlow-v1.0.0-blue.svg)
+![TaskFlow](https://img.shields.io/badge/TaskFlow-v3.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/thomas-more-devops/taskflow-group-7-IADI3)
 ![GitHub issues](https://img.shields.io/github/issues/thomas-more-devops/taskflow-group-7-IADI3)
@@ -54,13 +56,78 @@ This project is part of the **Bachelor International Business Management - Data 
 
 *Fully responsive design that works on all devices*
 
-## 🏃 Quick Start
+## 🏃 How to Run
 
-1. **Clone or download** this repository
-2. **Open** `index.html` in your web browser
-3. **Start managing** your tasks immediately!
+TaskFlow now runs as a Node.js/Express backend serving a static frontend, and is fully containerized with Docker. Two ways to run it:
 
-No build process, no dependencies, no setup required - just open and use!
+### Option A: Docker (recommended)
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
+cd taskflow-group-7-IADI3
+
+# 2. Build the image
+docker build -t taskflow:1.1 .
+
+# 3. Run the container
+docker run -d -p 3000:3000 --name taskflow-app taskflow:1.1
+
+# 4. Open the app
+# http://localhost:3000
+```
+
+Useful commands:
+```bash
+docker logs taskflow-app        # View server logs
+docker stop taskflow-app        # Stop the container
+docker rm taskflow-app          # Remove the container
+```
+
+If port 3000 is already taken on your machine, map to a different host port instead:
+```bash
+docker run -d -p 3001:3000 --name taskflow-app taskflow:1.1
+# then open http://localhost:3001
+```
+
+### Option B: Node.js directly (no Docker)
+
+Requires Node.js >= 22.
+
+```bash
+git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
+cd taskflow-group-7-IADI3
+npm install
+npm start
+# open http://localhost:3000
+```
+
+### Verifying it works
+
+```bash
+curl http://localhost:3000/health
+# {"status":"ok"}
+
+curl -X POST http://localhost:3000/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test task from API"}'
+
+curl http://localhost:3000/api/tasks
+# The task you just created should be in the response, and visible
+# in the browser at http://localhost:3000 after a refresh.
+```
+
+### API Reference
+
+| Method | Endpoint          | Description              |
+|--------|-------------------|---------------------------|
+| GET    | `/health`         | Health check (`{"status":"ok"}`) |
+| GET    | `/api/tasks`      | List all tasks            |
+| POST   | `/api/tasks`      | Create a task (`{title, priority, category, dueDate}`) |
+| PUT    | `/api/tasks/:id`  | Update a task              |
+| DELETE | `/api/tasks/:id`  | Delete a task              |
+
+Tasks are stored in-memory on the server, so they reset when the container/server restarts.
 
 ## 📋 Usage
 
@@ -107,24 +174,32 @@ This project demonstrates:
 
 ```
 taskflow/
-├── index.html              # Main HTML file
-├── styles/
-│   └── main.css           # All CSS styles
-├── scripts/
-│   └── app.js             # Application JavaScript
+├── server.js                # Express backend (REST API + static file serving)
+├── Dockerfile                # Container build
+├── .dockerignore
+├── package.json
+├── public/                   # Frontend, served by server.js
+│   ├── index.html
+│   ├── styles/
+│   │   └── main.css
+│   └── scripts/
+│       └── app.js            # Talks to the API (fetch), not localStorage
 ├── docs/
-│   ├── SETUP.md           # Installation guide
-│   ├── FEATURES.md        # Feature documentation
-│   ├── ARCHITECTURE.md    # Technical documentation
-│   └── CONTRIBUTING.md    # Contributing guidelines
+│   ├── SETUP.md
+│   ├── FEATURES.md
+│   ├── ARCHITECTURE.md
+│   ├── CONTRIBUTING.md
+│   └── RELEASE_RETRO_v2.0.0.md
 ├── .github/
-│   └── pull_request_template.md  # PR template
+│   ├── workflows/ci.yml      # CI pipeline
+│   ├── ISSUE_TEMPLATE/
+│   └── pull_request_template.md
 ├── screenshots/
-│   ├── 1.png              # Desktop screenshot
-│   └── 2.jpg              # Mobile screenshot
-├── .gitignore             # Git ignore rules
-├── LICENCE                # MIT license
-└── README.md              # This file
+│   ├── 1.png
+│   └── 2.jpg
+├── .gitignore
+├── LICENSE
+└── README.md
 ```
 
 ## 🛠️ Development Workflow
@@ -150,15 +225,10 @@ git push origin feature/feature-name   # Push to remote
 
 ## 🚀 Deployment
 
-### GitHub Pages
-1. Push your code to a GitHub repository
-2. Go to Settings → Pages
-3. Select source: "Deploy from branch"
-4. Choose "main" branch
-5. Your app will be live at `https://<username-or-org>.github.io/<repository-name>` (this project: https://thomas-more-devops.github.io/taskflow-group-7-IADI3/)
+As of v3.0.0, TaskFlow requires a running Node.js backend (`/api/tasks`), so it can no longer be deployed as a static site on GitHub Pages — the API routes would 404 there. See [How to Run](#-how-to-run) for Docker/Node.js instructions. Any host that can run a Docker container (or plain Node.js) works: Fly.io, Render, Railway, a VPS, etc.
 
 ### Local Development
-Simply open `index.html` in any modern web browser. No server required!
+See [How to Run](#-how-to-run) above — `docker build`/`docker run`, or `npm install && npm start`.
 
 ## 🌟 Key Features Explained
 
