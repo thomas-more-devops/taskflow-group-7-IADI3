@@ -1,0 +1,31 @@
+services:
+  taskflow-db:
+    image: mongo:8.0.15
+    container_name: taskflow-db
+    volumes:
+      - taskflow-db-data:/data/db
+    networks:
+      - taskflow-net
+    restart: unless-stopped
+
+  taskflow-app:
+    build: .
+    image: taskflow:2.0
+    container_name: taskflow-app
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=taskflow-db
+      - DB_NAME=taskflow
+    networks:
+      - taskflow-net
+    depends_on:
+      - taskflow-db
+    restart: unless-stopped
+
+networks:
+  taskflow-net:
+    driver: bridge
+
+volumes:
+  taskflow-db-data:
