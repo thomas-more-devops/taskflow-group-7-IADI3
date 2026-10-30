@@ -13,6 +13,11 @@ app.use(express.static('public'));
 let tasks = [];
 let nextId = 1;
 
+// Bonus: health check endpoint (useful for Docker HEALTHCHECK / orchestrators)
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 // API Routes
 app.get('/api/tasks', (req, res) => {
   res.json(tasks);
