@@ -1,19 +1,19 @@
 {
   "name": "taskflow",
-  "version": "2.0.0",
-  "description": "Enhanced task management application with priorities, categories, and due dates",
-  "main": "index.html",
+  "version": "3.0.0",
+  "description": "Enhanced task management application with Node.js backend",
+  "main": "server.js",
   "scripts": {
-    "start": "echo 'TaskFlow is a static web application. Open index.html in your browser.'",
-    "lint": "eslint scripts/ --ext .js",
-    "lint:fix": "eslint scripts/ --ext .js --fix",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "lint": "eslint public/scripts/ --ext .js",
+    "lint:fix": "eslint public/scripts/ --ext .js --fix",
     "test": "echo 'Integration tests will be added in future versions'",
     "validate": "npm run lint && npm run validate:html && npm run validate:css",
     "validate:html": "echo 'HTML validation - basic structure check'",
     "validate:css": "echo 'CSS validation - syntax check'",
     "build": "echo 'Build process - optimization for production'",
     "deploy": "echo 'Deployment to GitHub Pages via GitHub Actions'",
-    "dev": "echo 'Development server - serve files locally'",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -31,7 +31,11 @@
     "local-storage",
     "web-application",
     "devops",
-    "git-workflow"
+    "git-workflow",
+    "nodejs",
+    "express",
+    "docker",
+    "containerization"
   ],
   "author": "TaskFlow Development Team",
   "license": "MIT",
@@ -39,7 +43,12 @@
     "url": "https://github.com/your-username/taskflow/issues"
   },
   "homepage": "https://your-username.github.io/taskflow/",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
   "devDependencies": {
+    "nodemon": "^3.0.1",
     "eslint": "^8.50.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.28.1",
@@ -54,13 +63,12 @@
     "not ie 11"
   ],
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=6.0.0"
+    "node": ">=22.0.0",
+    "npm": ">=9.0.0"
   },
   "files": [
-    "index.html",
-    "styles/",
-    "scripts/",
+    "server.js",
+    "public/",
     "docs/",
     "README.md",
     "LICENSE"
@@ -89,9 +97,9 @@
   },
   "metadata": {
     "framework": "Vanilla JavaScript",
-    "architecture": "Client-side SPA",
-    "storage": "localStorage",
-    "deployment": "GitHub Pages",
+    "architecture": "Client-side SPA with Node.js backend",
+    "storage": "In-memory (server)",
+    "deployment": "Docker container",
     "ci": "GitHub Actions"
   }
 }
