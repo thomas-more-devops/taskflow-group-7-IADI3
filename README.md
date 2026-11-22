@@ -8,7 +8,7 @@
 [https://thomas-more-devops.github.io/taskflow-group-7-IADI3/](https://thomas-more-devops.github.io/taskflow-group-7-IADI3/)
 
 ## 📊 Project Status
-![TaskFlow](https://img.shields.io/badge/TaskFlow-v4.0.0-blue.svg)
+![TaskFlow](https://img.shields.io/badge/TaskFlow-v5.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/thomas-more-devops/taskflow-group-7-IADI3)
 ![GitHub issues](https://img.shields.io/github/issues/thomas-more-devops/taskflow-group-7-IADI3)
@@ -38,10 +38,11 @@ This project is part of the **Bachelor International Business Management - Data 
 
 ## 🛠️ Technologies Used
 
-- **HTML5**: Semantic markup and modern web standards
-- **CSS3**: Flexbox, Grid, custom properties, and animations
-- **JavaScript ES6+**: Classes, modules, and modern syntax
-- **Local Storage API**: Client-side data persistence
+- **HTML5 / CSS3 / JavaScript ES6+**: Frontend UI (semantic markup, Flexbox/Grid, classes/modules)
+- **nginx**: Frontend microservice - static file serving + reverse proxy to the backend
+- **Node.js / Express**: Backend REST API
+- **MongoDB / Mongoose**: Persistent task storage
+- **Docker / Docker Compose**: Each service is an independent container; Compose orchestrates all three
 - **Google Fonts**: Inter font family for typography
 
 ## 📱 Screenshots
@@ -58,9 +59,16 @@ This project is part of the **Bachelor International Business Management - Data 
 
 ## 🏃 How to Run
 
-As of v4.0.0, TaskFlow is two containers: the Node.js/Express app and MongoDB, talking to each other over a private Docker network. Tasks persist in a named volume, so they survive container restarts and even container removal.
+As of v5.0.0, TaskFlow is three independent microservices orchestrated with Docker Compose:
 
-### Option A: Docker Compose (recommended, one command)
+```
+Frontend (nginx) → Backend (Node.js/Express) → Database (MongoDB)
+     :80                   internal only              internal only
+```
+
+Only the frontend's port 80 is published to the host. The backend and database are reachable only from other containers on the Compose network — nginx proxies `/api` to the backend, and the backend talks to MongoDB by its service name.
+
+### Docker Compose (the only supported way to run this now)
 
 Requires Docker with the Compose plugin (`docker compose version`).
 
@@ -68,115 +76,75 @@ Requires Docker with the Compose plugin (`docker compose version`).
 git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
 cd taskflow-group-7-IADI3
 
-docker compose up -d
-# open http://localhost:3000
+docker compose up -d --build
+# open http://localhost
 ```
 
 ```bash
-docker compose logs taskflow-app   # View app logs
-docker compose down                # Stop and remove both containers (volume is kept)
-```
-
-### Option B: Manual Docker (network + volume + two containers)
-
-```bash
-git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
-cd taskflow-group-7-IADI3
-
-# 1. Create the network and volume (one-time)
-docker network create taskflow-net
-docker volume create taskflow-db-data
-
-# 2. Start MongoDB (no -p: not reachable from the host on purpose)
-docker run -d --name taskflow-db \
-  --network taskflow-net \
-  -v taskflow-db-data:/data/db \
-  mongo:8.0.15
-
-# 3. Build and start the app
-docker build -t taskflow:2.0 .
-docker run -d --name taskflow-app \
-  --network taskflow-net \
-  -p 3000:3000 \
-  -e DB_HOST=taskflow-db \
-  -e DB_NAME=taskflow \
-  taskflow:2.0
-
-# open http://localhost:3000
-```
-
-```bash
-docker logs taskflow-app   # Should show "MongoDB connected: taskflow-db:27017/taskflow"
-```
-
-If port 3000 is already taken on your machine, map to a different host port: `-p 3001:3000`, then open `http://localhost:3001`.
-
-See [docs/DATABASE_SETUP.md](docs/DATABASE_SETUP.md) for more detail on the network/volume setup, including how to inspect the database directly with `mongosh`.
-
-### Option C: Node.js directly (no Docker, needs your own MongoDB)
-
-Requires Node.js >= 22 and a MongoDB instance reachable at `DB_HOST:DB_PORT` (defaults to `mongodb:27017`).
-
-```bash
-git clone https://github.com/thomas-more-devops/taskflow-group-7-IADI3.git
-cd taskflow-group-7-IADI3
-npm install
-DB_HOST=localhost DB_PORT=27017 npm start
-# open http://localhost:3000
+docker compose ps                   # Status of all 3 services
+docker compose logs -f backend      # Follow backend logs (look for "Connected to MongoDB")
+docker compose down                 # Stop and remove all 3 containers (volume is kept)
 ```
 
 ### Verifying it works
 
 ```bash
-curl http://localhost:3000/health
-# {"status":"ok"}
+curl http://localhost/api/health
+# {"status":"ok","service":"backend","hostname":"<container id>"}
 
-curl -X POST http://localhost:3000/api/tasks \
+curl -X POST http://localhost/api/tasks \
   -H "Content-Type: application/json" \
   -d '{"title":"Test task from API"}'
 
-curl http://localhost:3000/api/tasks
+curl http://localhost/api/tasks
 # The task you just created should be in the response, and visible
-# in the browser at http://localhost:3000 after a refresh.
+# in the browser at http://localhost after a refresh.
 ```
 
 ### Testing persistence
 
-These prove the volume actually works, not just that the app runs.
-
-**Removing the app container** (tasks live in the database, not the app):
 ```bash
-docker rm -f taskflow-app
-docker run -d --name taskflow-app --network taskflow-net -p 3000:3000 -e DB_HOST=taskflow-db -e DB_NAME=taskflow taskflow:2.0
-# refresh http://localhost:3000 - your tasks are still there
+docker compose down
+docker compose up -d
+# wait a few seconds for the database healthcheck, then:
+curl http://localhost/api/tasks
+# Your tasks are still there - they live in the taskflow-data volume,
+# not in any container, so removing all 3 containers doesn't lose them.
 ```
 
-**Removing both containers** (the real test — the database container itself is gone):
+### Scaling the backend
+
 ```bash
-docker rm -f taskflow-app taskflow-db
-docker run -d --name taskflow-db --network taskflow-net -v taskflow-db-data:/data/db mongo:8.0.15
-docker run -d --name taskflow-app --network taskflow-net -p 3000:3000 -e DB_HOST=taskflow-db -e DB_NAME=taskflow taskflow:2.0
-# wait ~10s, refresh - your tasks are still there, because the new
-# database container mounted the same taskflow-db-data volume
+docker compose up -d --scale backend=3
+docker compose ps   # 3 backend-N containers, still 1 frontend/database
 ```
 
-**Why removing the volume mount loses data:** if you start `taskflow-db` *without* `-v taskflow-db-data:/data/db`, MongoDB writes to the container's own ephemeral writable layer instead of the named volume. That layer is deleted along with the container, so a fresh container starts with an empty `/data/db` and `GET /api/tasks` returns `[]`. We verified this directly: with the volume, two containers were removed and recreated and all tasks remained; without it, tasks disappeared on container removal. The volume — not the container — is what's durable.
+This works because no service in `docker-compose.yml` sets `container_name` — Compose needs to generate a unique name per replica (`backend-1`, `backend-2`, `backend-3`), which a fixed name would prevent.
+
+**Bonus — nginx load balancing across replicas:** `frontend/nginx.conf` doesn't just `proxy_pass http://backend:3000` directly. A bare hostname there is resolved *once*, at nginx startup — so it would (a) crash nginx entirely if `backend` isn't resolvable yet, and (b) keep forwarding every request to whichever single backend container existed at that moment, even after scaling. Instead, the config uses Docker's embedded DNS resolver (`127.0.0.11`) with a variable in `proxy_pass`, which forces nginx to re-resolve `backend` on every request. Verified directly: with 3 replicas running, 30 requests to `/api/health` through nginx came back with 3 different container hostnames (15/6/9 split) — proof it's actually distributing across all of them, not pinned to one.
+
+```bash
+# See the distribution yourself:
+for i in $(seq 1 10); do curl -s http://localhost/api/health; echo; done
+```
+
+### Troubleshooting
+
+- **Backend can't connect to DB**: confirm `DB_HOST=database` in `docker-compose.yml` matches the `database` service name, and that `docker compose ps` shows it `healthy`.
+- **Frontend shows 502**: the backend isn't up yet or crashed - check `docker compose logs backend`. This is a clean 502, not a frontend crash (see the load-balancing note above for why that distinction matters).
+- **Data lost after `docker compose down`**: make sure you didn't also pass `-v` (that removes the `taskflow-data` volume too) and that `docker-compose.yml` still has the volume mounted on the `database` service.
 
 ### API Reference
 
 | Method | Endpoint          | Description              |
 |--------|-------------------|---------------------------|
-| GET    | `/health`         | Health check (`{"status":"ok"}`) |
+| GET    | `/api/health`     | Health check (`{"status","service","hostname"}`) |
 | GET    | `/api/tasks`      | List all tasks            |
 | POST   | `/api/tasks`      | Create a task (`{title, priority, category, dueDate}`) |
 | PUT    | `/api/tasks/:id`  | Update a task              |
 | DELETE | `/api/tasks/:id`  | Delete a task              |
 
-Tasks are stored in MongoDB (via the `taskflow-db-data` volume), so they survive app and database container restarts/removal as long as the volume isn't deleted (`docker volume rm taskflow-db-data` or `docker compose down -v` would remove it).
-
-### A note on image size
-
-The Dockerfile is a multi-stage build (builder installs prod-only deps, production stage runs as the non-root `node` user). The app's own dependencies are small (~19MB with mongoose), but `node:22-alpine` itself is ~239MB in current builds, so the final `taskflow:2.0` image measures **~263MB** — over the 250MB target from the assignment. There isn't much further to trim while staying on `node:22-alpine` for both stages as required; switching to a smaller/distroless base would be the next lever if size becomes a hard constraint.
+All routes are reached through nginx at `http://localhost/api/...` - the backend itself has no port published to the host.
 
 ## 📋 Usage
 
@@ -223,20 +191,22 @@ This project demonstrates:
 
 ```
 taskflow/
-├── server.js                # Express backend (REST API + static file serving)
-├── database.js               # MongoDB connection (retries until ready)
-├── models/
-│   └── Task.js                # Mongoose schema
-├── Dockerfile                 # Multi-stage build, non-root user
-├── docker-compose.yml         # One-command startup (app + MongoDB)
-├── .dockerignore
-├── package.json
-├── public/                   # Frontend, served by server.js
-│   ├── index.html
-│   ├── styles/
-│   │   └── main.css
-│   └── scripts/
-│       └── app.js            # Talks to the API (fetch), not localStorage
+├── docker-compose.yml          # Orchestrates all 3 services
+├── frontend/                   # nginx microservice
+│   ├── Dockerfile
+│   ├── nginx.conf               # Serves static files, proxies /api, load-balances
+│   └── public/
+│       ├── index.html
+│       ├── styles/main.css
+│       └── scripts/app.js       # Talks to the API (fetch), not localStorage
+├── backend/                    # Express/Mongoose microservice
+│   ├── Dockerfile                # Multi-stage build, non-root user
+│   ├── .dockerignore
+│   ├── .eslintrc.js
+│   ├── package.json
+│   ├── server.js
+│   └── models/
+│       └── Task.js
 ├── docs/
 │   ├── SETUP.md
 │   ├── FEATURES.md
@@ -279,20 +249,25 @@ git push origin feature/feature-name   # Push to remote
 
 ## 🚀 Deployment
 
-As of v3.0.0, TaskFlow requires a running Node.js backend (`/api/tasks`), so it can no longer be deployed as a static site on GitHub Pages — the API routes would 404 there. See [How to Run](#-how-to-run) for Docker/Node.js instructions. Any host that can run a Docker container (or plain Node.js) works: Fly.io, Render, Railway, a VPS, etc.
+As of v5.0.0, TaskFlow is three containers orchestrated by `docker-compose.yml`, so it can no longer be deployed as a static site on GitHub Pages — the API routes would 404 there. Any host that can run Docker Compose (or an equivalent orchestrator) works: a VPS, Fly.io, Render, Railway, a small Kubernetes cluster, etc.
 
 ### Local Development
-See [How to Run](#-how-to-run) above — `docker build`/`docker run`, or `npm install && npm start`.
+See [How to Run](#-how-to-run) above — `docker compose up -d --build`.
 
 ## 🌟 Key Features Explained
 
-### Local Storage Integration
-Tasks are automatically saved to your browser's local storage, ensuring persistence across sessions:
+### Persistent Storage via MongoDB
+Tasks are saved to MongoDB through the backend's REST API (not browser local storage), so they persist across devices, browser sessions, and container restarts - as long as the `taskflow-data` volume isn't deleted:
 
 ```javascript
-// Automatic saving after every change
-saveTasks() {
-    localStorage.setItem('taskflow_tasks', JSON.stringify(this.tasks));
+// public/scripts/app.js - every mutation goes through the API
+async addTask() {
+    const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: taskText, priority, category, dueDate })
+    });
+    // ...
 }
 ```
 
@@ -496,7 +471,24 @@ Thanks to all the students and developers who contributed to this project:
 
 ## 🔄 Version History
 
-### v2.0.0 (Current)
+### v5.0.0 (Current)
+- 🚀 Split into three independent microservices: frontend (nginx), backend (Express/Mongoose), database (MongoDB)
+- 🚀 docker-compose.yml orchestrates all three, with a healthcheck-gated startup order
+- 🐛 Fixed nginx crashing at startup when the backend wasn't resolvable yet; now resolves lazily via Docker's embedded DNS, which also makes it load-balance across scaled backend replicas
+- 🐛 Restored the PUT /api/tasks/:id route and async error handling, both dropped in the assignment's simplified backend spec and required for the frontend's edit/complete actions and for clean error responses
+- 🎁 Bonus: proved nginx load-balances across `--scale backend=N` replicas (verified: 30 requests, 3 distinct containers)
+
+### v4.0.0
+- 🚀 MongoDB persistence via Mongoose, replacing in-memory storage
+- 🚀 Multi-stage Dockerfile, non-root container user
+- 🚀 docker-compose.yml (app + MongoDB), named volume for persistence
+- 🐛 Fixed unquoted task IDs in inline onclick handlers (broke once MongoDB's string _id replaced numeric IDs)
+
+### v3.0.0
+- 🚀 Node.js/Express backend with a REST API, replacing the pure static-site + localStorage architecture
+- 🚀 Containerized with Docker (single image)
+
+### v2.0.0
 - 🚀 Task priority levels (High/Medium/Low) with color-coded badges and sorting
 - 🚀 Task categories (Work, Personal, Shopping, Health, Study) with filtering and breakdown stats
 - 🚀 Due date tracking with overdue/due-today detection and animated warnings
