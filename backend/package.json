@@ -1,0 +1,65 @@
+{
+  "name": "taskflow-backend",
+  "version": "5.0.0",
+  "description": "TaskFlow backend microservice (Express + MongoDB/Mongoose API)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "lint": "eslint server.js models/ --ext .js",
+    "lint:fix": "eslint server.js models/ --ext .js --fix",
+    "test": "echo 'Integration tests will be added in future versions'",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/taskflow.git"
+  },
+  "keywords": [
+    "task-management",
+    "nodejs",
+    "express",
+    "mongodb",
+    "mongoose",
+    "docker",
+    "microservices"
+  ],
+  "author": "TaskFlow Development Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-username/taskflow/issues"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "mongoose": "^8.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=9.0.0"
+  },
+  "files": [
+    "server.js",
+    "models/"
+  ],
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "printWidth": 100
+  },
+  "metadata": {
+    "framework": "Express",
+    "architecture": "Microservice - REST API over MongoDB",
+    "storage": "MongoDB (via the database microservice)",
+    "deployment": "Docker container",
+    "ci": "GitHub Actions"
+  }
+}
