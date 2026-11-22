@@ -21,32 +21,34 @@ jobs:
       with:
         node-version: '24'
         cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
         
     - name: 📦 Install dependencies
       run: |
-        if [ -f package.json ]; then
+        # Since the microservices split, the only package.json is backend/.
+        if [ -f backend/package.json ]; then
           # NODE_ENV=production (set workflow-wide below) makes npm skip devDependencies
           # by default, which silently drops eslint/prettier and masks lint failures
           # behind the "|| echo" fallback below. Force dev deps to install for CI.
-          npm ci --include=dev
+          (cd backend && npm ci --include=dev)
         else
-          echo "No package.json found, skipping npm install"
+          echo "No backend/package.json found, skipping npm install"
         fi
-        
+
     - name: 🧹 Run ESLint
       run: |
-        if [ -f package.json ]; then
-          npm run lint || echo "Linting not configured, skipping"
+        if [ -f backend/package.json ]; then
+          (cd backend && npm run lint) || echo "Linting not configured, skipping"
         else
-          echo "No package.json found, skipping linting"
+          echo "No backend/package.json found, skipping linting"
         fi
-        
+
     - name: 🧪 Run tests
       run: |
-        if [ -f package.json ]; then
-          npm test || echo "Tests not configured, skipping"
+        if [ -f backend/package.json ]; then
+          (cd backend && npm test) || echo "Tests not configured, skipping"
         else
-          echo "No package.json found, skipping tests"
+          echo "No backend/package.json found, skipping tests"
         fi
         
     - name: 🔗 Validate HTML files
@@ -111,7 +113,7 @@ jobs:
         echo "🏗️ Validating TaskFlow build..."
         
         # Check all required files exist
-        required_files=("server.js" "package.json" "public/index.html" "public/styles/main.css" "public/scripts/app.js" "README.md")
+        required_files=("backend/server.js" "backend/package.json" "backend/Dockerfile" "frontend/Dockerfile" "frontend/nginx.conf" "frontend/public/index.html" "frontend/public/styles/main.css" "frontend/public/scripts/app.js" "README.md")
         for file in "${required_files[@]}"; do
           if [ -f "$file" ]; then
             echo "✅ $file exists"
