@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const os = require('os');
 const Task = require('./models/Task');
 
 const app = express();
@@ -22,7 +23,9 @@ const wrap = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 // Health check (under /api so nginx's "location /api" proxy can reach it;
 // a bare "/health" would be swallowed by the frontend's static-file route)
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'backend' });
+  // hostname lets us prove nginx is actually load-balancing across
+  // scaled backend replicas, instead of just not crashing
+  res.json({ status: 'ok', service: 'backend', hostname: os.hostname() });
 });
 
 // Task routes
