@@ -1,31 +1,29 @@
 services:
-  taskflow-db:
-    image: mongo:8.0.15
-    container_name: taskflow-db
-    volumes:
-      - taskflow-db-data:/data/db
-    networks:
-      - taskflow-net
-    restart: unless-stopped
-
-  taskflow-app:
-    build: .
-    image: taskflow:2.0
-    container_name: taskflow-app
+  frontend:
+    build: ./frontend
     ports:
-      - "3000:3000"
-    environment:
-      - DB_HOST=taskflow-db
-      - DB_NAME=taskflow
-    networks:
-      - taskflow-net
+      - "80:80"
     depends_on:
-      - taskflow-db
-    restart: unless-stopped
+      - backend
 
-networks:
-  taskflow-net:
-    driver: bridge
+  backend:
+    build: ./backend
+    environment:
+      - DB_HOST=database
+      - DB_NAME=taskflow
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: mongo:8
+    volumes:
+      - taskflow-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
-  taskflow-db-data:
+  taskflow-data:
